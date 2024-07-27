@@ -72,11 +72,9 @@
 
   <script>
     var i = 0;
-    var txt = `Hello Dear GOD. Thanks a lot for making this wonderful app.
-    This will help many people for infinity times.
-
-    Seek from me that which Shams-e Tabrizi has bestowed, for
-    I have the same.`;
+    var txt = `Hello Dear Friend, welcome to our self learning platform.
+    Where you can learn anything at your own time. You can read and also take notes. 
+    You can change the voice you like.`;
     var speed = 72;
     var typingInterval;
     var speechSynthesis = window.speechSynthesis;
@@ -123,7 +121,6 @@
       if (speechSynthesis.speaking) {
         speechSynthesis.cancel(); // Cancel any ongoing speech
       }
-      isMuted = !isMuted;
     }
 
     function typeWriter() {
