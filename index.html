@@ -63,17 +63,18 @@
   </div>
 
   <div class="button-container">
-    <button onclick="startTypeWriter()">Start</button>
+    <button onclick="startTypeWriterWithVoice()">Start</button>
     <button class="stop" onclick="stopTypeWriter()">Stop</button>
-    <button class="listen" onclick="restartTypeWriter()">Listen</button>
-    <button class="mute" onclick="muteText()">Mute</button><br><br>
+    <button class="listen" onclick="restartTypeWriter()">Restart</button>
+    <button class="mute" id="muteButton" onclick="toggleMute()">Mute</button><br><br>
     <select id="voiceSelect"></select>
   </div>
 
   <script>
     var i = 0;
     var txt = `
-    Hello Dear Friend - Welcome to our self learning platform.
+    Hello Dear Friend, 
+    Welcome to our self learning platform.
     Where you can learn anything at your own time. 
     You can read and also take notes. 
     You can change the voice you like.
@@ -105,17 +106,18 @@
     Thank you.
 
  `;
-    var speed = 70;
+    var speed = 72;
     var typingInterval;
     var speechSynthesis = window.speechSynthesis;
     var utterance;
     var isMuted = false;
+    var voices = [];
 
     function startTypeWriterWithVoice() {
       if (!typingInterval) {
         typingInterval = setInterval(typeWriter, speed);
         if (!isMuted) {
-          speakText(txt);
+          speakTextFromPosition(i);
         }
       }
     }
@@ -147,9 +149,18 @@
       startTypeWriterWithVoice(); // Start typing and speech again
     }
 
-    function muteText() {
-      if (speechSynthesis.speaking) {
-        speechSynthesis.cancel(); // Cancel any ongoing speech
+    function toggleMute() {
+      isMuted = !isMuted;
+      const muteButton = document.getElementById("muteButton");
+      if (isMuted) {
+        if (speechSynthesis.speaking) {
+          speechSynthesis.cancel(); // Cancel any ongoing speech
+        }
+        muteButton.textContent = "Unmute";
+      } else {
+        muteButton.textContent = "Mute";
+        stopTypeWriter();
+        
       }
     }
 
@@ -167,7 +178,7 @@
 
     function populateVoiceList() {
       voices = speechSynthesis.getVoices();
-      for (i = 0; i < voices.length; i++) {
+      for (var i = 0; i < voices.length; i++) {
         const option = document.createElement('option');
         option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
         option.value = i;
@@ -178,11 +189,11 @@
     speechSynthesis.addEventListener('voiceschanged', populateVoiceList);
     populateVoiceList();
 
-    function speakText(text) {
+    function speakTextFromPosition(startPosition) {
       if (speechSynthesis.speaking) {
         speechSynthesis.cancel(); // Cancel any ongoing speech
       }
-      utterance = new SpeechSynthesisUtterance(text);
+      const utterance = new SpeechSynthesisUtterance(txt.substring(startPosition));
       utterance.voice = voices[voicesSelect.value]; // Set the selected voice
       speechSynthesis.speak(utterance);
     }
