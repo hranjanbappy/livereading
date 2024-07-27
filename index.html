@@ -1,178 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preformatted Text Example</title>
-    <style>
-        .responsive-pre {
-            white-space: pre-wrap; /* Preserves spaces and line breaks but allows text to wrap */
-            font-family: 'Indie Flower', cursive;
-            font-size: 1.5em;
-            color: #333;
-            background-color: #f9f9f9;
-            padding: 20px;
-            border: 2px solid #ccc;
-            border-radius: 10px;
-            max-width: 100%;
-            overflow: hidden; /* Hides overflowing text */
-            text-overflow: ellipsis; /* Adds ellipsis when text overflows */
-            text-align: left; /* Aligns text to the left */
-            margin: 0 auto; /* Centers the div horizontally */
-            text-align: center;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text-to-Speech with Voice Selection</title>
+  <style>
+    .responsive-pre {
+      white-space: pre-wrap;
+      font-family: 'Indie Flower', cursive;
+      font-size: 1.5em;
+      color: #333;
+      background-color: #f9f9f9;
+      padding: 20px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: left;
+      margin: 0 auto;
+      text-align: center;
+    }
 
-        @media (max-width: 600px) {
-            .responsive-pre {
-                font-size: 1.2em;
-                padding: 15px;
-            }
-        }
+    .button-container {
+      text-align: center;
+      margin: 20px 0;
+    }
 
-        @media (max-width: 400px) {
-            .responsive-pre {
-                font-size: 1em;
-                padding: 10px;
-            }
-        }
+    button {
+      font-size: 1em;
+      padding: 10px 20px;
+      margin: 0 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+    }
 
-        .button-container {
-            text-align: center;
-            margin: 20px 0;
-        }
+    button.stop {
+      background-color: #dc3545;
+    }
 
-        button {
-            font-size: 1em;
-            padding: 10px 20px;
-            margin: 0 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-        }
+    button.listen {
+      background-color: #28a745;
+    }
 
-        button.stop {
-            background-color: #dc3545;
-        }
+    button.mute {
+      background-color: #6c757d;
+    }
 
-        button.listen {
-            background-color: #28a745;
-        }
-
-        button.mute {
-            background-color: #6c757d;
-        }
-
-        button:hover {
-            opacity: 0.9;
-        }
-    </style>
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
 </head>
 <body>
-    <div class="responsive-pre">
-        <div style="display: inline-block; text-align: left;">
-            <p id="demo"></p>
-        </div>
+  <div class="responsive-pre">
+    <div style="display: inline-block; text-align: left;">
+      <p id="demo"></p>
     </div>
+  </div>
 
-    <div class="button-container">
-        <button onclick="startTypeWriter()">Start</button>
-        <button class="stop" onclick="stopTypeWriter()">Stop</button>
-        <button class="listen" onclick="restartTypeWriter()">Listen</button>
-        <button class="mute" onclick="muteText()">Mute</button>
-    </div>
+  <div class="button-container">
+    <button onclick="startTypeWriter()">Start</button>
+    <button class="stop" onclick="stopTypeWriter()">Stop</button>
+    <button class="listen" onclick="restartTypeWriter()">Listen</button>
+    <button class="mute" onclick="muteText()">Mute</button><br><br>
+    <select id="voiceSelect"></select>
+  </div>
 
-    <script>
-        var i = 0;
-        var txt = `Hello Dear GOD. Thanks a lot for making this wonderful app.
-        This will help many people for infinity times.
-       
-I have a fire for you in my mouth, but I have a hundred seals
-on my tongue.
-The flames which I have in my heart would make one mouth-
-ful of both worlds.
-Though the entire world should pass away, without the world
-I possess the kingdom of a hundred worlds.
-Caravans which are loaded with sugar I have in motion for
-the Egypt of nonexistence.
-The drunkenness of love makes me unaware whether I have
-profit of loss therefrom.
-The body’s eye was scattering pearls because of love, till now
-I have a pearl-scattering soul.
-I am not housebound, for like Jesus I have a home in the fourth
-Heaven.
-Thanks be to Him who gives soul to the body; if the soul
-should depart, yet I have the soul of the soul.
-Seek from me that which Shams-e Tabrizi has bestowed, for
-I have the same.`;
-        var speed = 72;
-        var typingInterval;
-        var speechSynthesis = window.speechSynthesis;
-        var utterance;
-        var isMuted = false; // Track mute status
+  <script>
+    var i = 0;
+    var txt = `Hello Dear GOD. Thanks a lot for making this wonderful app.
+    This will help many people for infinity times.
 
-        function startTypeWriterWithVoice() {
-            if (!typingInterval) {
-                typingInterval = setInterval(typeWriter, speed);
-                if (!isMuted) {
-                    speakText(txt);
-                }
-            }
+    Seek from me that which Shams-e Tabrizi has bestowed, for
+    I have the same.`;
+    var speed = 72;
+    var typingInterval;
+    var speechSynthesis = window.speechSynthesis;
+    var utterance;
+    var isMuted = false;
+
+    function startTypeWriterWithVoice() {
+      if (!typingInterval) {
+        typingInterval = setInterval(typeWriter, speed);
+        if (!isMuted) {
+          speakText(txt);
         }
+      }
+    }
 
+    function startTypeWriter() {
+      if (!typingInterval) {
+        typingInterval = setInterval(typeWriter, speed);
+      }
+      if (speechSynthesis.speaking) {
+        speechSynthesis.resume(); // Resume speech if paused
+      }
+    }
 
-        function startTypeWriter() {
-            if (!typingInterval) {
-                typingInterval = setInterval(typeWriter, speed);
-            }
-            if (speechSynthesis.speaking) {
-                speechSynthesis.resume(); // Resume speech if paused
-            }
-        }
+    function stopTypeWriter() {
+      clearInterval(typingInterval);
+      typingInterval = null;
+      if (speechSynthesis.speaking) {
+        speechSynthesis.pause(); // Pause ongoing speech
+      }
+    }
 
-        function stopTypeWriter() {
-            clearInterval(typingInterval);
-            typingInterval = null;
-            if (speechSynthesis.speaking) {
-                speechSynthesis.pause(); // Pause ongoing speech
-            }
-        }
+    function restartTypeWriter() {
+      stopTypeWriter(); // Ensure typing is stopped
+      i = 0; // Reset index
+      document.getElementById("demo").innerHTML = ''; // Clear the text
+      if (speechSynthesis.speaking) {
+        speechSynthesis.cancel(); // Stop any ongoing speech
+      }
+      startTypeWriterWithVoice(); // Start typing and speech again
+    }
 
-        function restartTypeWriter() {
-            stopTypeWriter(); // Ensure typing is stopped
-            i = 0; // Reset index
-            document.getElementById("demo").innerHTML = ''; // Clear the text
-            if (speechSynthesis.speaking) {
-                speechSynthesis.cancel(); // Stop any ongoing speech
-            }
-            startTypeWriterWithVoice(); // Start typing and speech again
-        }
+    function muteText() {
+      if (speechSynthesis.speaking) {
+        speechSynthesis.cancel(); // Cancel any ongoing speech
+      }
+      isMuted = !isMuted;
+    }
 
-        function speakText(text) {
-            if (speechSynthesis.speaking) {
-                speechSynthesis.cancel(); // Cancel any ongoing speech
-            }
-            utterance = new SpeechSynthesisUtterance(text);
-            speechSynthesis.speak(utterance);
-        }
-        
-        function muteText() {
-            if (speechSynthesis.speaking) {
-                speechSynthesis.cancel(); // Cancel any ongoing speech
-            }
-        }
+    function typeWriter() {
+      if (i < txt.length) {
+        document.getElementById("demo").innerHTML += txt.charAt(i);
+        i++;
+      } else {
+        clearInterval(typingInterval);
+        typingInterval = null;
+      }
+    }
 
-  
-        function typeWriter() {
-            if (i < txt.length) {
-                document.getElementById("demo").innerHTML += txt.charAt(i);
-                i++;
-            } else {
-                clearInterval(typingInterval);
-                typingInterval = null;
-            }
-        }
-    </script>
+    const voicesSelect = document.getElementById('voiceSelect');
+
+    function populateVoiceList() {
+      voices = speechSynthesis.getVoices();
+      for (i = 0; i < voices.length; i++) {
+        const option = document.createElement('option');
+        option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
+        option.value = i;
+        voicesSelect.add(option);
+      }
+    }
+
+    speechSynthesis.addEventListener('voiceschanged', populateVoiceList);
+    populateVoiceList();
+
+    function speakText(text) {
+      if (speechSynthesis.speaking) {
+        speechSynthesis.cancel(); // Cancel any ongoing speech
+      }
+      utterance = new SpeechSynthesisUtterance(text);
+      utterance.voice = voices[voicesSelect.value]; // Set the selected voice
+      speechSynthesis.speak(utterance);
+    }
+  </script>
 </body>
 </html>
