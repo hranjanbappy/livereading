@@ -89,7 +89,7 @@
     To watch his woods fill up with snow.   
     
     My little horse must think it queer
-    To stopwithout a farmhouse near
+    To stop without a farmhouse near
     Between the woods and frozen lake
     The darkest evening of the year.   
     
@@ -104,8 +104,7 @@
     And miles to go before I sleep.
 
     Thank you.
-
- `;
+    `;
     var speed = 72;
     var typingInterval;
     var speechSynthesis = window.speechSynthesis;
@@ -160,7 +159,6 @@
       } else {
         muteButton.textContent = "Mute";
         stopTypeWriter();
-        
       }
     }
 
@@ -197,6 +195,12 @@
       utterance.voice = voices[voicesSelect.value]; // Set the selected voice
       speechSynthesis.speak(utterance);
     }
+
+    window.addEventListener('beforeunload', function() {
+      if (speechSynthesis.speaking) {
+        speechSynthesis.cancel(); // Cancel any ongoing speech before unloading
+      }
+    });
   </script>
 </body>
 </html>
